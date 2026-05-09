@@ -21,7 +21,10 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Candor — Honest design critique",
+  title: {
+    default: "Candor – Honest design critique",
+    template: "%s – Candor",
+  },
   description: "Paste a design. Get a structured audit across six human dimensions.",
 };
 
