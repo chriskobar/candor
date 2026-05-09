@@ -639,8 +639,8 @@ export default function LandingPage() {
                   style={{ backgroundColor: deepCritique ? "#2d7d62" : "#E0DDD2" }}
                 />
                 <span
-                  className="absolute top-[2px] w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
-                  style={{ transform: deepCritique ? "translateX(42px)" : "translateX(2px)" }}
+                  className="absolute top-[2px] left-0 w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
+                  style={{ transform: deepCritique ? "translateX(2px)" : "translateX(42px)" }}
                 />
               </button>
               <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#a09890] leading-normal">
@@ -655,7 +655,7 @@ export default function LandingPage() {
             )}
 
             {/* CTA */}
-            <div className="px-[90px]">
+            <div className="px-[90px] pt-[30px]">
               <button
                 onClick={handleSubmit}
                 disabled={!canSubmit}
