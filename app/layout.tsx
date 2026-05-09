@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { DM_Serif_Display } from "next/font/google";
+import { Inter, Sora, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-sora",
 });
 
 const dmSerif = DM_Serif_Display({
@@ -27,7 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${dmSerif.variable} antialiased`}>
+      <body className={`${inter.variable} ${sora.variable} ${dmSerif.variable} antialiased`}>
         {children}
       </body>
     </html>

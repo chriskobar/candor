@@ -317,21 +317,19 @@ function UploadZone({
   // If image loaded — show preview
   if (image) {
     return (
-      <div className="relative w-full rounded-2xl overflow-hidden border border-[#D4CEC5] bg-[#F5F1EB]">
-        {/* Preview */}
+      <div className="relative w-full rounded-xl overflow-hidden border border-[#D4CEC5] bg-[#F5F1EB]">
         <img
           src={image.previewUrl}
           alt="Design to critique"
           className="w-full max-h-[420px] object-contain"
         />
-        {/* Overlay bar */}
         <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-3 bg-[#FAFAF8]/90 backdrop-blur-sm border-t border-[#EAE5DE]">
-          <span className="text-sm text-[#6D6861] truncate max-w-[240px]">
+          <span className="text-sm text-[#6D6861] truncate max-w-[240px] font-[family-name:var(--font-inter)]">
             {image.fileName}
           </span>
           <button
             onClick={onClear}
-            className="text-sm font-medium text-[#C05C35] hover:text-[#8C3918] transition-colors ml-4 flex-shrink-0"
+            className="text-sm font-medium text-[#C05C35] hover:text-[#8C3918] transition-colors ml-4 flex-shrink-0 font-[family-name:var(--font-inter)]"
           >
             Remove
           </button>
@@ -345,37 +343,21 @@ function UploadZone({
     <div
       onClick={() => inputRef.current?.click()}
       className={`
-        relative w-full rounded-2xl cursor-pointer transition-all duration-200
-        border-2 border-dashed
+        relative w-full rounded-xl cursor-pointer transition-all duration-200
+        border border-dashed select-none
         ${isDragging
-          ? "border-[#2D7D62] bg-[#E5F3EE] scale-[1.01]"
-          : "border-[#D4CEC5] bg-[#F5F1EB] hover:border-[#2D7D62] hover:bg-[#EDF7F3]"
+          ? "border-[#2D7D62] bg-[#E5F3EE] scale-[1.005]"
+          : "border-[#D4CEC5] bg-[#F5F1EB] hover:border-[#2D7D62]"
         }
       `}
-      style={{ minHeight: 260 }}
     >
-      <div className="flex flex-col items-center justify-center gap-3 py-14 px-6 select-none">
-        {/* Icon */}
-        <div className={`
-          w-12 h-12 rounded-full flex items-center justify-center
-          border-[1.5px] transition-colors duration-200
-          ${isDragging ? "bg-[#2D7D62] border-[#2D7D62]" : "bg-[#E5F3EE] border-[#2D7D62]"}
-        `}>
-          <span className={`text-sm font-semibold transition-colors ${isDragging ? "text-white" : "text-[#2D7D62]"}`}>
-            ⌘V
-          </span>
-        </div>
-
-        <div className="text-center">
-          <p className="text-[17px] font-semibold text-[#1C1917] leading-snug">
-            {isDragging ? "Drop it here" : "Paste your screenshot"}
-          </p>
-          <p className="text-[14px] text-[#A09890] mt-1">
-            or drag a file, or{" "}
-            <span className="text-[#2D7D62] underline underline-offset-2">browse</span>
-          </p>
-          <p className="text-[12px] text-[#A09890] mt-1">PNG or JPG up to 10MB</p>
-        </div>
+      <div className="flex flex-col items-center justify-center gap-[10px] py-[17px] px-[38px]">
+        <p className="text-[14px] text-[#6b6764] font-[family-name:var(--font-inter)] leading-normal">
+          {isDragging ? "Drop it here" : "Paste, drag or upload a screenshot"}
+        </p>
+        <p className="text-[10px] text-[#a09890] font-[family-name:var(--font-inter)] leading-normal">
+          PNG or JPG, up to 10MB
+        </p>
       </div>
 
       <input
@@ -392,28 +374,35 @@ function UploadZone({
   );
 }
 
-// ─── How it works strip ───────────────────────────────────────────
-function HowItWorks() {
-  const steps = [
-    { n: "01", title: "Paste or upload", body: "Screenshot any design — your own work, a competitor, a client's site. No account needed." },
-    { n: "02", title: "Add context", body: "Tell Candor who the design is for. Optional, but it makes the audience resonance feedback sharper." },
-    { n: "03", title: "Get the honest read", body: "Six scored dimensions plus a Designer's Read — the kind of feedback a good mentor gives, not a checklist." },
+// ─── Blocks ───────────────────────────────────────────────────────
+function Blocks() {
+  const blocks = [
+    {
+      title: "Add design",
+      body: "Screenshot your own design, a competitor, a client's site. No account needed.",
+    },
+    {
+      title: "Add context",
+      body: "Tell Candor the overall intent and who the design is for. It makes the feedback sharper.",
+    },
+    {
+      title: "Get the honest read",
+      body: "Scored dimensions and a designer's read — the feedback a good mentor gives, not a checklist.",
+    },
   ];
 
   return (
-    <section id="how" className="mt-24 mb-16 px-0">
-      <p className="text-xs font-medium tracking-widest uppercase text-[#A09890] mb-8">
-        How it works
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {steps.map((s) => (
-          <div key={s.n} className="flex flex-col gap-3">
-            <span className="text-xs text-[#A09890] font-medium">{s.n}</span>
-            <p className="text-[15px] font-semibold text-[#1C1917]">{s.title}</p>
-            <p className="text-[14px] text-[#6D6861] leading-relaxed">{s.body}</p>
-          </div>
-        ))}
-      </div>
+    <section className="flex items-start justify-between py-[60px]">
+      {blocks.map((b) => (
+        <div key={b.title} className="flex flex-col gap-[10px] w-[200px]">
+          <p className="font-[family-name:var(--font-sora)] font-bold text-[17px] text-[#454340] leading-normal">
+            {b.title}
+          </p>
+          <p className="font-[family-name:var(--font-inter)] font-medium text-[15px] text-[#918a80] leading-[22px]">
+            {b.body}
+          </p>
+        </div>
+      ))}
     </section>
   );
 }
@@ -543,7 +532,7 @@ export default function LandingPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#FAFAF8]"
+      className="min-h-screen bg-[#fafaf8]"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -553,139 +542,148 @@ export default function LandingPage() {
 
       {/* Full-page drag overlay */}
       {isDragging && (
-        <div className="fixed inset-0 z-30 bg-[#2D7D62]/5 border-4 border-dashed border-[#2D7D62] pointer-events-none rounded-none" />
+        <div className="fixed inset-0 z-30 bg-[#2D7D62]/5 border-2 border-dashed border-[#2D7D62] pointer-events-none" />
       )}
 
-      {/* Main content */}
-      <main className="pt-16">
-        <div className="max-w-2xl mx-auto px-6 md:px-8">
+      <main className="pt-16 pb-[60px]">
+
+        {/* ── Centred content column ── */}
+        <div className="w-full max-w-[700px] mx-auto px-5 flex flex-col gap-[20px]">
 
           {/* Hero */}
-          <div className="pt-16 pb-10">
-            <h1 className="font-serif text-[44px] md:text-[56px] text-[#1C1917] leading-[1.15] tracking-tight">
-              Honest design critique.<br />
-              <span className="text-[#6D6861]">No agenda, no filters.</span>
-            </h1>
-            <p className="mt-5 text-[17px] text-[#6D6861] leading-relaxed max-w-lg">
-              Paste or upload a design. Get a structured audit across six human
-              dimensions — clarity, trust, audience fit, emotion, message, and
-              inclusivity.
-            </p>
-          </div>
+          <div className="flex flex-col gap-[30px] items-center py-[20px]">
 
-          {/* Upload zone */}
-          <UploadZone
-            image={image}
-            isDragging={isDragging && !image}
-            onFileSelect={processFile}
-            onClear={() => setImage(null)}
-          />
+            {/* Illustration */}
+            <div className="w-[479px] max-w-full">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero-illustration.png"
+                alt="Design review illustration"
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
 
-          {/* Primary Design Intent */}
-          <div className="mt-3">
-            <label className="block text-xs font-medium text-[#6D6861] mb-1.5 ml-1">
-              Primary Design Intent
-              <span className="text-[#A09890] font-normal ml-1">— shapes the lead score</span>
-            </label>
-            <input
-              type="text"
-              value={primaryIntent}
-              onChange={(e) => setPrimaryIntent(e.target.value)}
-              placeholder="e.g. This should feel approachable and trustworthy for seniors"
-              maxLength={200}
-              className="
-                w-full h-[48px] px-4
-                bg-white border border-[#D4CEC5] rounded-xl
-                text-[14px] text-[#1C1917] placeholder-[#A09890]
-                focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
-                transition-colors
-              "
-            />
-          </div>
-
-          {/* Context input */}
-          <div className="mt-2">
-            <input
-              type="text"
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder="Additional context (optional) — audience, platform, stage"
-              maxLength={200}
-              className="
-                w-full h-[44px] px-4
-                bg-[#F5F1EB] border border-transparent rounded-xl
-                text-[13px] text-[#1C1917] placeholder-[#A09890]
-                focus:outline-none focus:border-[#D4CEC5] focus:ring-0
-                transition-colors
-              "
-            />
-          </div>
-
-          {/* Deep critique toggle */}
-          <div className="mt-3 flex items-start gap-3 px-1">
-            <button
-              role="switch"
-              aria-checked={deepCritique}
-              onClick={() => setDeepCritique((v) => !v)}
-              className={`
-                mt-0.5 flex-shrink-0 w-9 h-5 rounded-full border transition-colors duration-200 relative
-                ${deepCritique
-                  ? "bg-[#2D7D62] border-[#2D7D62]"
-                  : "bg-[#E5E0D8] border-[#D4CEC5]"
-                }
-              `}
-            >
-              <span className={`
-                absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200
-                ${deepCritique ? "translate-x-4" : "translate-x-0.5"}
-              `} />
-            </button>
-            <div>
-              <p className="text-[13px] font-medium text-[#1C1917] leading-snug">
-                Deep critique
-              </p>
-              <p className="text-[12px] text-[#A09890] leading-relaxed mt-0.5">
-                Adds usability heuristics, cognitive load, AI &amp; agentic patterns, and interaction analysis — takes ~2× longer
+            {/* Heading — breaks out to viewport width */}
+            <div className="flex flex-col gap-[10px] items-center text-center">
+              <div
+                className="relative"
+                style={{ width: "100vw", left: "50%", transform: "translateX(-50%)" }}
+              >
+                <h1
+                  className="font-[family-name:var(--font-dm-serif)] text-[52px] text-[#1c1917] leading-[64px] text-center px-4"
+                >
+                  Honest design critique.<br />No agenda, no filters.
+                </h1>
+              </div>
+              <p className="font-[family-name:var(--font-sora)] text-[17px] text-[#6d6861] leading-normal">
+                Get a structured audit across six human dimensions.
               </p>
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
-            <p className="mt-3 text-sm text-[#C05C35]">{error}</p>
-          )}
+          {/* Form */}
+          <div className="flex flex-col gap-[20px]">
 
-          {/* CTA */}
-          <button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            className={`
-              mt-4 w-full h-[52px] rounded-xl
-              text-[16px] font-semibold tracking-tight
-              transition-all duration-200
-              ${canSubmit
-                ? "bg-[#2D7D62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
-                : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
-              }
-            `}
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                {deepCritique ? "Running deep critique…" : "Running critique…"}
-              </span>
-            ) : (
-              deepCritique ? "Run Deep Critique" : "Run Critique"
+            {/* Upload zone */}
+            <UploadZone
+              image={image}
+              isDragging={isDragging && !image}
+              onFileSelect={processFile}
+              onClear={() => setImage(null)}
+            />
+
+            {/* Intent */}
+            <input
+              type="text"
+              value={primaryIntent}
+              onChange={(e) => setPrimaryIntent(e.target.value)}
+              placeholder="Optional design intent – e.g. approachable and trustworthy for struggling seniors"
+              maxLength={200}
+              className="
+                w-full px-[16px] py-[15px]
+                bg-white border border-[#d4cec5] rounded-[10px]
+                font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
+                focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
+                transition-colors
+              "
+            />
+
+            {/* Context */}
+            <input
+              type="text"
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder="Optional context – e.g. fintech app for users 55+"
+              maxLength={200}
+              className="
+                w-full px-[16px] py-[15px]
+                bg-white border border-[#d4cec5] rounded-[10px]
+                font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
+                focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
+                transition-colors
+              "
+            />
+
+            {/* Deep critique toggle */}
+            <div className="flex gap-[10px] items-center">
+              <button
+                role="switch"
+                aria-checked={deepCritique}
+                onClick={() => setDeepCritique((v) => !v)}
+                className="relative flex-shrink-0 transition-colors duration-200"
+                style={{ width: 70, height: 30 }}
+              >
+                <span
+                  className="absolute inset-0 rounded-full transition-colors duration-200"
+                  style={{ backgroundColor: deepCritique ? "#2d7d62" : "#E0DDD2" }}
+                />
+                <span
+                  className="absolute top-[2px] w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
+                  style={{ transform: deepCritique ? "translateX(42px)" : "translateX(2px)" }}
+                />
+              </button>
+              <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#a09890] leading-normal">
+                <span className="font-bold text-[#6d6861]">Deep critique</span>
+                {" – usability, cognitive load, and AI patterns, ~2x longer"}
+              </p>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-[#C05C35] font-[family-name:var(--font-inter)]">{error}</p>
             )}
-          </button>
 
-          {/* Reassurance */}
-          <p className="mt-4 text-center text-[13px] text-[#A09890]">
-            No account needed. Results appear in seconds.
-          </p>
+            {/* CTA */}
+            <div className="px-[90px]">
+              <button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className={`
+                  w-full h-[48px] rounded-[10px]
+                  font-[family-name:var(--font-sora)] font-semibold text-[15px]
+                  transition-all duration-200
+                  ${canSubmit
+                    ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
+                    : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
+                  }
+                `}
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    {deepCritique ? "Running deep critique…" : "Running critique…"}
+                  </span>
+                ) : (
+                  deepCritique ? "Run Deep Critique" : "Run Critique"
+                )}
+              </button>
+            </div>
 
-          {/* How it works */}
-          <HowItWorks />
+          </div>
+
+          {/* Blocks */}
+          <Blocks />
 
         </div>
       </main>
