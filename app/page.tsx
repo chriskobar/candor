@@ -421,10 +421,17 @@ export default function LandingPage() {
 
   // ── API key state ──
   const [hasServerKey, setHasServerKey] = useState<boolean | null>(null);
-  const [apiKeyExpanded, setApiKeyExpanded] = useState(false);
-  const [userApiKey, setUserApiKey] = useState("");
+  // validatedKey = a key that has passed the /api/validate-key check (or was pre-loaded from sessionStorage)
+  const [validatedKey, setValidatedKey] = useState("");
+  // keyInput = what the user is currently typing in fallback mode
+  const [keyInput, setKeyInput] = useState("");
+  const [keyError, setKeyError] = useState<string | null>(null);
+  const [isValidatingKey, setIsValidatingKey] = useState(false);
 
-  // Check server-side key and pre-populate from sessionStorage on mount
+  // Fallback mode: no server key AND no validated user key yet
+  const isFallbackMode = hasServerKey === false && !validatedKey;
+
+  // Check server-side key; if absent, pre-populate from sessionStorage on mount
   useEffect(() => {
     fetch("/api/config")
       .then((r) => r.json())
@@ -432,8 +439,10 @@ export default function LandingPage() {
         setHasServerKey(hasApiKey);
         if (!hasApiKey) {
           const stored = sessionStorage.getItem("candor_user_api_key") || "";
-          setUserApiKey(stored);
-          if (stored) setApiKeyExpanded(true);
+          if (stored) {
+            // Trust a previously-validated stored key; re-validation happens on audit failure
+            setValidatedKey(stored);
+          }
         }
       })
       .catch(() => setHasServerKey(false));
@@ -509,6 +518,33 @@ export default function LandingPage() {
     if (file) processFile(file);
   }, [processFile]);
 
+  // ── Validate API key (fallback mode only) ──
+  const handleValidateKey = async () => {
+    const trimmed = keyInput.trim();
+    if (!trimmed) return;
+    setIsValidatingKey(true);
+    setKeyError(null);
+    try {
+      const res = await fetch("/api/validate-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userApiKey: trimmed }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setKeyError(data.error || "Invalid API key. Please check it and try again.");
+        return;
+      }
+      // Valid — unlock normal mode
+      setValidatedKey(trimmed);
+      sessionStorage.setItem("candor_user_api_key", trimmed);
+    } catch {
+      setKeyError("Could not verify key. Please try again.");
+    } finally {
+      setIsValidatingKey(false);
+    }
+  };
+
   // ── Submit ──
   const handleSubmit = async () => {
     if (!image) return;
@@ -525,7 +561,7 @@ export default function LandingPage() {
           context: context.trim() || undefined,
           primaryIntent: primaryIntent.trim() || undefined,
           deepCritique,
-          userApiKey: userApiKey.trim() || undefined,
+          userApiKey: validatedKey || undefined,
         }),
       });
 
@@ -549,8 +585,7 @@ export default function LandingPage() {
     }
   };
 
-  const needsKey = hasServerKey === false && !userApiKey.trim();
-  const canSubmit = !!image && !isLoading && !needsKey;
+  const canSubmit = !!image && !isLoading;
 
   return (
     <div
@@ -605,158 +640,182 @@ export default function LandingPage() {
           </div>
 
           {/* Form */}
-          <div className="flex flex-col gap-[20px]">
+          {isFallbackMode ? (
 
-            {/* Upload zone */}
-            <UploadZone
-              image={image}
-              isDragging={isDragging && !image}
-              onFileSelect={processFile}
-              onClear={() => setImage(null)}
-            />
-
-            {/* Intent */}
-            <input
-              type="text"
-              value={primaryIntent}
-              onChange={(e) => setPrimaryIntent(e.target.value)}
-              placeholder="Optional design intent – e.g. approachable and trustworthy for struggling seniors"
-              maxLength={200}
-              className="
-                w-full px-[16px] py-[15px]
-                bg-white border border-[#d4cec5] rounded-[10px]
-                font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
-                focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
-                transition-colors
-              "
-            />
-
-            {/* Context */}
-            <input
-              type="text"
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder="Optional context – e.g. fintech app for users 55+"
-              maxLength={200}
-              className="
-                w-full px-[16px] py-[15px]
-                bg-white border border-[#d4cec5] rounded-[10px]
-                font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
-                focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
-                transition-colors
-              "
-            />
-
-            {/* API key section — only when no server key */}
-            {hasServerKey === false && (
+            /* ── Fallback mode: key entry only ── */
+            <div className="flex flex-col gap-[14px]">
               <div>
-                {/* Collapsed trigger */}
-                <button
-                  onClick={() => setApiKeyExpanded((v) => !v)}
-                  className="flex items-center gap-1.5 text-[12px] text-[#A09890] hover:text-[#6D6861] transition-colors font-[family-name:var(--font-inter)]"
-                >
-                  <svg
-                    viewBox="0 0 12 12" width="10" height="10" fill="none"
-                    className={`transition-transform duration-200 ${apiKeyExpanded ? "rotate-180" : ""}`}
-                  >
-                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Using your own Anthropic API key?
-                </button>
-
-                {/* Expanded content */}
-                {apiKeyExpanded && (
-                  <div className="mt-3 flex flex-col gap-2">
-                    <input
-                      type="password"
-                      value={userApiKey}
-                      onChange={(e) => {
-                        setUserApiKey(e.target.value);
-                        sessionStorage.setItem("candor_user_api_key", e.target.value);
-                      }}
-                      placeholder="sk-ant-..."
-                      className="
-                        w-full px-[16px] py-[13px]
-                        bg-white border border-[#D4CEC5] rounded-[10px]
-                        font-[family-name:var(--font-inter)] text-[14px] text-[#1C1917] placeholder-[#A09890]
-                        focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
-                        transition-colors
-                      "
-                    />
-                    <p className="text-[11px] text-[#A09890] font-[family-name:var(--font-inter)] leading-relaxed">
-                      Your key is used only for this session and never stored on our servers.{" "}
-                      <a
-                        href="https://console.anthropic.com"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="underline underline-offset-2 hover:text-[#6D6861] transition-colors"
-                      >
-                        Get a key →
-                      </a>
-                    </p>
-                  </div>
-                )}
+                <p className="font-[family-name:var(--font-inter)] text-[13px] font-semibold text-[#6D6861] mb-[10px]">
+                  Anthropic API Key
+                </p>
+                <input
+                  type="password"
+                  value={keyInput}
+                  onChange={(e) => { setKeyInput(e.target.value); setKeyError(null); }}
+                  onKeyDown={(e) => { if (e.key === "Enter" && keyInput.trim() && !isValidatingKey) handleValidateKey(); }}
+                  placeholder="sk-ant-..."
+                  autoFocus
+                  className={`
+                    w-full px-[16px] py-[15px]
+                    bg-white rounded-[10px]
+                    font-[family-name:var(--font-inter)] text-[14px] text-[#1C1917] placeholder-[#A09890]
+                    focus:outline-none focus:ring-1 transition-colors
+                    ${keyError
+                      ? "border border-[#C05C35] focus:border-[#C05C35] focus:ring-[#C05C35]"
+                      : "border border-[#9C9690] focus:border-[#2D7D62] focus:ring-[#2D7D62]"
+                    }
+                  `}
+                />
               </div>
-            )}
 
-            {/* Deep critique toggle */}
-            <div className="flex gap-[10px] items-center">
-              <button
-                role="switch"
-                aria-checked={deepCritique}
-                onClick={() => setDeepCritique((v) => !v)}
-                className="relative flex-shrink-0 transition-colors duration-200"
-                style={{ width: 70, height: 30 }}
-              >
-                <span
-                  className="absolute inset-0 rounded-full transition-colors duration-200"
-                  style={{ backgroundColor: deepCritique ? "#2d7d62" : "#E0DDD2" }}
-                />
-                <span
-                  className="absolute top-[2px] left-0 w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
-                  style={{ transform: deepCritique ? "translateX(2px)" : "translateX(42px)" }}
-                />
-              </button>
-              <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#a09890] leading-normal">
-                <span className="font-bold text-[#6d6861]">Deep critique</span>
-                {" – usability, cognitive load, and AI patterns, ~2x longer"}
+              {/* Inline error */}
+              {keyError && (
+                <p className="text-[13px] text-[#C05C35] font-[family-name:var(--font-inter)] leading-snug">
+                  {keyError}
+                </p>
+              )}
+
+              {/* Note */}
+              <p className="text-[11px] text-[#A09890] font-[family-name:var(--font-inter)] leading-relaxed">
+                Your key is sent directly to Anthropic and never stored on our servers.{" "}
+                <a
+                  href="https://console.anthropic.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-2 hover:text-[#6D6861] transition-colors"
+                >
+                  Get a key →
+                </a>
               </p>
+
+              {/* CTA */}
+              <div className="px-[90px] pt-[16px]">
+                <button
+                  onClick={handleValidateKey}
+                  disabled={!keyInput.trim() || isValidatingKey}
+                  className={`
+                    w-full h-[48px] rounded-[10px]
+                    font-[family-name:var(--font-sora)] font-semibold text-[15px]
+                    transition-all duration-200
+                    ${keyInput.trim() && !isValidatingKey
+                      ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
+                      : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
+                    }
+                  `}
+                >
+                  {isValidatingKey ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      Verifying…
+                    </span>
+                  ) : "Continue"}
+                </button>
+              </div>
             </div>
 
-            {/* Error */}
-            {error && (
-              <p className="text-sm text-[#C05C35] font-[family-name:var(--font-inter)]">{error}</p>
-            )}
+          ) : (
 
-            {/* CTA */}
-            <div className="px-[90px] pt-[30px]">
-              <button
-                onClick={handleSubmit}
-                disabled={!canSubmit}
-                className={`
-                  w-full h-[48px] rounded-[10px]
-                  font-[family-name:var(--font-sora)] font-semibold text-[15px]
-                  transition-all duration-200
-                  ${canSubmit
-                    ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
-                    : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
-                  }
-                `}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    {deepCritique ? "Running deep critique…" : "Running critique…"}
-                  </span>
-                ) : needsKey ? (
-                  <span className="text-[13px]">Add your Anthropic API key above to run a critique</span>
-                ) : (
-                  deepCritique ? "Run Deep Critique" : "Run Critique"
-                )}
-              </button>
+            /* ── Normal mode: full form ── */
+            <div className="flex flex-col gap-[20px]">
+
+              {/* Upload zone */}
+              <UploadZone
+                image={image}
+                isDragging={isDragging && !image}
+                onFileSelect={processFile}
+                onClear={() => setImage(null)}
+              />
+
+              {/* Intent */}
+              <input
+                type="text"
+                value={primaryIntent}
+                onChange={(e) => setPrimaryIntent(e.target.value)}
+                placeholder="Optional design intent – e.g. approachable and trustworthy for struggling seniors"
+                maxLength={200}
+                className="
+                  w-full px-[16px] py-[15px]
+                  bg-white border border-[#d4cec5] rounded-[10px]
+                  font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
+                  focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
+                  transition-colors
+                "
+              />
+
+              {/* Context */}
+              <input
+                type="text"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                placeholder="Optional context – e.g. fintech app for users 55+"
+                maxLength={200}
+                className="
+                  w-full px-[16px] py-[15px]
+                  bg-white border border-[#d4cec5] rounded-[10px]
+                  font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
+                  focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
+                  transition-colors
+                "
+              />
+
+              {/* Deep critique toggle */}
+              <div className="flex gap-[10px] items-center">
+                <button
+                  role="switch"
+                  aria-checked={deepCritique}
+                  onClick={() => setDeepCritique((v) => !v)}
+                  className="relative flex-shrink-0 transition-colors duration-200"
+                  style={{ width: 70, height: 30 }}
+                >
+                  <span
+                    className="absolute inset-0 rounded-full transition-colors duration-200"
+                    style={{ backgroundColor: deepCritique ? "#2d7d62" : "#E0DDD2" }}
+                  />
+                  <span
+                    className="absolute top-[2px] left-0 w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
+                    style={{ transform: deepCritique ? "translateX(2px)" : "translateX(42px)" }}
+                  />
+                </button>
+                <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#a09890] leading-normal">
+                  <span className="font-bold text-[#6d6861]">Deep critique</span>
+                  {" – usability, cognitive load, and AI patterns, ~2x longer"}
+                </p>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <p className="text-sm text-[#C05C35] font-[family-name:var(--font-inter)]">{error}</p>
+              )}
+
+              {/* CTA */}
+              <div className="px-[90px] pt-[30px]">
+                <button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit}
+                  className={`
+                    w-full h-[48px] rounded-[10px]
+                    font-[family-name:var(--font-sora)] font-semibold text-[15px]
+                    transition-all duration-200
+                    ${canSubmit
+                      ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
+                      : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
+                    }
+                  `}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      {deepCritique ? "Running deep critique…" : "Running critique…"}
+                    </span>
+                  ) : (
+                    deepCritique ? "Run Deep Critique" : "Run Critique"
+                  )}
+                </button>
+              </div>
+
             </div>
 
-          </div>
+          )}
 
           {/* Blocks */}
           <Blocks />
