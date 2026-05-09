@@ -421,6 +421,7 @@ export default function LandingPage() {
   const dragCounterRef = useRef(0);
 
   const THINKING_PHRASES = [
+    // General
     "Studying the hierarchy…",
     "Checking the trust signals…",
     "Reading the room…",
@@ -431,6 +432,44 @@ export default function LandingPage() {
     "Considering the first impression…",
     "Looking for the gaps…",
     "Forming an opinion…",
+    // Hierarchy & clarity
+    "Tracing where the eye lands first…",
+    "Weighing the typographic contrast…",
+    "Checking if the headline earns its size…",
+    "Noticing what's fighting for attention…",
+    "Measuring the visual weight…",
+    // Trust & credibility
+    "Asking if this earns trust or spends it…",
+    "Checking for amateur tells…",
+    "Looking for where confidence breaks down…",
+    // Audience & resonance
+    "Putting on a different hat…",
+    "Testing the cultural register…",
+    // Tone & emotion
+    "Reading the emotional temperature…",
+    "Listening to what the details are saying…",
+    // Message legibility
+    "Running the three-second test…",
+    "Counting the competing messages…",
+    // Inclusivity
+    "Checking who might feel left out…",
+    "Testing against tired eyes…",
+    // Usability & interaction
+    "Tracing the happy path…",
+    "Looking for the obvious next action…",
+    "Checking what looks clickable…",
+    // Cognitive load
+    "Counting the decisions required…",
+    "Asking what could be cut…",
+  ];
+
+  const EASTER_EGG_PHRASES = [
+    "Leaning back in Eames chair…",
+    "Sidetracked by stakeholder…",
+    "Removing cat from keyboard…",
+    "Standing up to stretch…",
+    "What would Don Norman think…?",
+    "Oops, thinking about the beach…",
   ];
 
   useEffect(() => {
@@ -439,8 +478,15 @@ export default function LandingPage() {
     setThinkingPhrase(THINKING_PHRASES[randomStart]);
     let index = (randomStart + 1) % THINKING_PHRASES.length;
     const interval = setInterval(() => {
-      setThinkingPhrase(THINKING_PHRASES[index]);
-      index = (index + 1) % THINKING_PHRASES.length;
+      // ~8% chance of an Easter egg on any given tick
+      if (Math.random() < 0.08) {
+        const egg = EASTER_EGG_PHRASES[Math.floor(Math.random() * EASTER_EGG_PHRASES.length)];
+        setThinkingPhrase(egg);
+        // Don't advance index — next tick resumes normal sequence
+      } else {
+        setThinkingPhrase(THINKING_PHRASES[index]);
+        index = (index + 1) % THINKING_PHRASES.length;
+      }
     }, 2000);
     return () => clearInterval(interval);
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
