@@ -487,7 +487,7 @@ export default function LandingPage() {
         setThinkingPhrase(THINKING_PHRASES[index]);
         index = (index + 1) % THINKING_PHRASES.length;
       }
-    }, 3000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
