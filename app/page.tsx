@@ -557,7 +557,7 @@ export default function LandingPage() {
             <div className="w-[479px] max-w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/hero-illustration.png"
+                src="/hero-illustration.png?v=2"
                 alt="Design review illustration"
                 className="w-full h-auto"
                 draggable={false}
