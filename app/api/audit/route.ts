@@ -6,16 +6,28 @@ import {
   buildAuditPrompt,
 } from "@/lib/auditPrompt";
 
-const client = new Anthropic();
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { imageBase64, mediaType, context, primaryIntent, deepCritique } = body;
+    const { imageBase64, mediaType, context, primaryIntent, deepCritique, userApiKey } = body;
 
     if (!imageBase64) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
+
+    // Validate user-supplied key format
+    if (userApiKey && !userApiKey.startsWith("sk-ant-")) {
+      return NextResponse.json({ error: "Invalid API key format." }, { status: 400 });
+    }
+
+    const apiKey = userApiKey || process.env.ANTHROPIC_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json({ error: "No API key provided." }, { status: 401 });
+    }
+
+    // Client instantiated per-request so it picks up the correct key
+    const client = new Anthropic({ apiKey });
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
@@ -49,7 +61,6 @@ export async function POST(req: NextRequest) {
     const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
     const result = JSON.parse(cleaned);
 
-    // Pass the mode through so the results page can label it
     result.deepCritique = !!deepCritique;
 
     return NextResponse.json(result);

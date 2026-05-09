@@ -419,6 +419,26 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
   const dragCounterRef = useRef(0);
 
+  // ── API key state ──
+  const [hasServerKey, setHasServerKey] = useState<boolean | null>(null);
+  const [apiKeyExpanded, setApiKeyExpanded] = useState(false);
+  const [userApiKey, setUserApiKey] = useState("");
+
+  // Check server-side key and pre-populate from sessionStorage on mount
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then(({ hasApiKey }) => {
+        setHasServerKey(hasApiKey);
+        if (!hasApiKey) {
+          const stored = sessionStorage.getItem("candor_user_api_key") || "";
+          setUserApiKey(stored);
+          if (stored) setApiKeyExpanded(true);
+        }
+      })
+      .catch(() => setHasServerKey(false));
+  }, []);
+
   // ── Process a File object into ImageState ──
   const processFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -505,6 +525,7 @@ export default function LandingPage() {
           context: context.trim() || undefined,
           primaryIntent: primaryIntent.trim() || undefined,
           deepCritique,
+          userApiKey: userApiKey.trim() || undefined,
         }),
       });
 
@@ -528,7 +549,8 @@ export default function LandingPage() {
     }
   };
 
-  const canSubmit = !!image && !isLoading;
+  const needsKey = hasServerKey === false && !userApiKey.trim();
+  const canSubmit = !!image && !isLoading && !needsKey;
 
   return (
     <div
@@ -625,6 +647,58 @@ export default function LandingPage() {
               "
             />
 
+            {/* API key section — only when no server key */}
+            {hasServerKey === false && (
+              <div>
+                {/* Collapsed trigger */}
+                <button
+                  onClick={() => setApiKeyExpanded((v) => !v)}
+                  className="flex items-center gap-1.5 text-[12px] text-[#A09890] hover:text-[#6D6861] transition-colors font-[family-name:var(--font-inter)]"
+                >
+                  <svg
+                    viewBox="0 0 12 12" width="10" height="10" fill="none"
+                    className={`transition-transform duration-200 ${apiKeyExpanded ? "rotate-180" : ""}`}
+                  >
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Using your own Anthropic API key?
+                </button>
+
+                {/* Expanded content */}
+                {apiKeyExpanded && (
+                  <div className="mt-3 flex flex-col gap-2">
+                    <input
+                      type="password"
+                      value={userApiKey}
+                      onChange={(e) => {
+                        setUserApiKey(e.target.value);
+                        sessionStorage.setItem("candor_user_api_key", e.target.value);
+                      }}
+                      placeholder="sk-ant-..."
+                      className="
+                        w-full px-[16px] py-[13px]
+                        bg-white border border-[#D4CEC5] rounded-[10px]
+                        font-[family-name:var(--font-inter)] text-[14px] text-[#1C1917] placeholder-[#A09890]
+                        focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
+                        transition-colors
+                      "
+                    />
+                    <p className="text-[11px] text-[#A09890] font-[family-name:var(--font-inter)] leading-relaxed">
+                      Your key is used only for this session and never stored on our servers.{" "}
+                      <a
+                        href="https://console.anthropic.com"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline underline-offset-2 hover:text-[#6D6861] transition-colors"
+                      >
+                        Get a key →
+                      </a>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Deep critique toggle */}
             <div className="flex gap-[10px] items-center">
               <button
@@ -674,6 +748,8 @@ export default function LandingPage() {
                     <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                     {deepCritique ? "Running deep critique…" : "Running critique…"}
                   </span>
+                ) : needsKey ? (
+                  <span className="text-[13px]">Add your Anthropic API key above to run a critique</span>
                 ) : (
                   deepCritique ? "Run Deep Critique" : "Run Critique"
                 )}
