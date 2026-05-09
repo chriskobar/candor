@@ -417,7 +417,33 @@ export default function LandingPage() {
   const [deepCritique, setDeepCritique] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [thinkingPhrase, setThinkingPhrase] = useState("");
   const dragCounterRef = useRef(0);
+
+  const THINKING_PHRASES = [
+    "Studying the hierarchy…",
+    "Checking the trust signals…",
+    "Reading the room…",
+    "Feeling out the tone…",
+    "Asking who this is really for…",
+    "Noting what's working…",
+    "Finding the friction…",
+    "Considering the first impression…",
+    "Looking for the gaps…",
+    "Forming an opinion…",
+  ];
+
+  useEffect(() => {
+    if (!isLoading) return;
+    const randomStart = Math.floor(Math.random() * THINKING_PHRASES.length);
+    setThinkingPhrase(THINKING_PHRASES[randomStart]);
+    let index = (randomStart + 1) % THINKING_PHRASES.length;
+    const interval = setInterval(() => {
+      setThinkingPhrase(THINKING_PHRASES[index]);
+      index = (index + 1) % THINKING_PHRASES.length;
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── API key state ──
   const [hasServerKey, setHasServerKey] = useState<boolean | null>(null);
@@ -803,9 +829,8 @@ export default function LandingPage() {
                   `}
                 >
                   {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                      {deepCritique ? "Running deep critique…" : "Running critique…"}
+                    <span key={thinkingPhrase} className="thinking-phrase">
+                      {thinkingPhrase}
                     </span>
                   ) : (
                     deepCritique ? "Run Deep Critique" : "Run Critique"
