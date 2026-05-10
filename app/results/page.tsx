@@ -5,23 +5,7 @@ import { useRouter } from "next/navigation";
 import type { AuditResult, DimensionScore } from "@/types/audit";
 
 // ─── Design tokens ────────────────────────────────────────────────
-const c = {
-  bgBase:        "#FAFAF8",
-  bgSurface:     "#F5F1EB",
-  bgElevated:    "#FFFFFF",
-  textPrimary:   "#1C1917",
-  textSecondary: "#6D6861",
-  textTertiary:  "#A09890",
-  borderSubtle:  "#EAE5DE",
-  borderDefault: "#D4CEC5",
-  accentBold:    "#2D7D62",
-  accentSubtle:  "#E5F3EE",
-  accentText:    "#1D5A46",
-  warmBold:      "#C05C35",
-  warmSubtle:    "#FAEEE7",
-  amber:         "#C9893A",
-  amberSubtle:   "#FDF4E7",
-};
+import { c } from "@/lib/tokens";
 
 // ─── Helpers ──────────────────────────────────────────────────────
 function scoreColor(score: number) {

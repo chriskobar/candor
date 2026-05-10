@@ -352,10 +352,10 @@ function UploadZone({
       `}
     >
       <div className="flex flex-col items-center justify-center gap-[10px] py-[17px] px-[38px]">
-        <p className="text-[14px] text-[#6b6764] font-[family-name:var(--font-inter)] leading-normal">
+        <p className="text-[14px] text-[#6D6861] font-[family-name:var(--font-inter)] leading-normal">
           {isDragging ? "Drop it here" : "Paste, drag or upload a screenshot"}
         </p>
-        <p className="text-[10px] text-[#a09890] font-[family-name:var(--font-inter)] leading-normal">
+        <p className="text-[10px] text-[#A09890] font-[family-name:var(--font-inter)] leading-normal">
           PNG or JPG, up to 10MB
         </p>
       </div>
@@ -472,10 +472,10 @@ function Blocks() {
     <section className="flex items-start justify-between py-[60px]">
       {blocks.map((b) => (
         <div key={b.title} className="flex flex-col gap-[10px] w-[200px]">
-          <p className="font-[family-name:var(--font-sora)] font-bold text-[17px] text-[#454340] leading-normal">
+          <p className="font-[family-name:var(--font-sora)] font-bold text-[17px] text-[#1C1917] leading-normal">
             {b.title}
           </p>
-          <p className="font-[family-name:var(--font-inter)] font-medium text-[15px] text-[#918a80] leading-[22px]">
+          <p className="font-[family-name:var(--font-inter)] font-medium text-[15px] text-[#A09890] leading-[22px]">
             {b.body}
           </p>
         </div>
@@ -742,7 +742,7 @@ export default function LandingPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#fafaf8]"
+      className="min-h-screen bg-[#FAFAF8]"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -781,12 +781,12 @@ export default function LandingPage() {
                 style={{ width: "100vw", left: "50%", transform: "translateX(-50%)" }}
               >
                 <h1
-                  className="font-[family-name:var(--font-dm-serif)] text-[52px] text-[#1c1917] leading-[64px] text-center px-4"
+                  className="font-[family-name:var(--font-dm-serif)] text-[52px] text-[#1C1917] leading-[64px] text-center px-4"
                 >
                   Honest design critique.<br />No agenda, no filters.
                 </h1>
               </div>
-              <p className="font-[family-name:var(--font-sora)] text-[17px] text-[#6d6861] leading-normal">
+              <p className="font-[family-name:var(--font-sora)] text-[17px] text-[#6D6861] leading-normal">
                 Get a structured gut-check across six human dimensions.
               </p>
             </div>
@@ -815,7 +815,7 @@ export default function LandingPage() {
                     focus:outline-none focus:ring-1 transition-colors
                     ${keyError
                       ? "border border-[#C05C35] focus:border-[#C05C35] focus:ring-[#C05C35]"
-                      : "border border-[#9C9690] focus:border-[#2D7D62] focus:ring-[#2D7D62]"
+                      : "border border-[#A09890] focus:border-[#2D7D62] focus:ring-[#2D7D62]"
                     }
                   `}
                 />
@@ -851,7 +851,7 @@ export default function LandingPage() {
                     font-[family-name:var(--font-sora)] font-semibold text-[15px]
                     transition-all duration-200
                     ${keyInput.trim() && !isValidatingKey
-                      ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
+                      ? "bg-[#2D7D62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
                       : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
                     }
                   `}
@@ -888,8 +888,8 @@ export default function LandingPage() {
                 maxLength={200}
                 className="
                   w-full px-[16px] py-[15px]
-                  bg-white border border-[#d4cec5] rounded-[10px]
-                  font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
+                  bg-white border border-[#D4CEC5] rounded-[10px]
+                  font-[family-name:var(--font-inter)] text-[14px] text-[#1C1917] placeholder-[#A09890]
                   focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
                   transition-colors
                 "
@@ -909,15 +909,15 @@ export default function LandingPage() {
                 >
                   <span
                     className="absolute inset-0 rounded-full transition-colors duration-200"
-                    style={{ backgroundColor: deepCritique ? "#2d7d62" : "#E0DDD2" }}
+                    style={{ backgroundColor: deepCritique ? "#2D7D62" : "#E0DDD2" }}
                   />
                   <span
                     className="absolute top-[2px] left-0 w-[26px] h-[26px] rounded-full bg-white shadow-sm transition-transform duration-200"
                     style={{ transform: deepCritique ? "translateX(2px)" : "translateX(42px)" }}
                   />
                 </button>
-                <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#a09890] leading-normal">
-                  <span className="font-bold text-[#6d6861]">Deep critique</span>
+                <p className="font-[family-name:var(--font-inter)] text-[12px] text-[#A09890] leading-normal">
+                  <span className="font-bold text-[#6D6861]">Deep critique</span>
                   {" – usability, cognitive load, and AI patterns, ~2x longer"}
                 </p>
               </div>
@@ -937,7 +937,7 @@ export default function LandingPage() {
                     font-[family-name:var(--font-sora)] font-semibold text-[15px]
                     transition-all duration-200
                     ${canSubmit
-                      ? "bg-[#2d7d62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
+                      ? "bg-[#2D7D62] text-white hover:bg-[#1D5A46] active:scale-[0.99] cursor-pointer"
                       : "bg-[#D4CEC5] text-[#A09890] cursor-not-allowed"
                     }
                   `}
