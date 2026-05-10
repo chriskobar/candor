@@ -374,6 +374,83 @@ function UploadZone({
   );
 }
 
+// ─── Auto-expanding context textarea ─────────────────────────────
+const CONTEXT_MAX  = 600;
+const LINE_HEIGHT  = 24;
+const MIN_ROWS     = 2;
+const MAX_ROWS     = 7;
+const MIN_HEIGHT   = MIN_ROWS * LINE_HEIGHT; // 48px
+const MAX_HEIGHT   = MAX_ROWS * LINE_HEIGHT; // 168px
+
+function ContextInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const remaining = CONTEXT_MAX - value.length;
+  const isOver    = remaining < 0;
+  const isWarning = remaining >= 0 && remaining <= 60;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const clamped = Math.min(Math.max(el.scrollHeight, MIN_HEIGHT), MAX_HEIGHT);
+    el.style.height = `${clamped}px`;
+  }, [value]);
+
+  return (
+    <div className="relative">
+      <textarea
+        ref={ref}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Optional context — audience, platform, design stage, constraints…"
+        rows={MIN_ROWS}
+        style={{
+          minHeight: MIN_HEIGHT,
+          maxHeight: MAX_HEIGHT,
+          lineHeight: `${LINE_HEIGHT}px`,
+          resize: "none",
+          paddingBottom: 24,
+        }}
+        className={`
+          w-full px-4 pt-3
+          bg-[#F5F1EB] border rounded-xl
+          font-[family-name:var(--font-inter)] text-[14px] text-[#1C1917] placeholder-[#A09890]
+          focus:outline-none focus:bg-white transition-all duration-150
+          overflow-y-auto
+          ${isOver
+            ? "border-[#C05C35] focus:border-[#C05C35] focus:ring-1 focus:ring-[#C05C35]"
+            : "border-transparent focus:border-[#D4CEC5]"
+          }
+        `}
+      />
+      <div
+        className="absolute bottom-2 right-3 pointer-events-none"
+        aria-live="polite"
+      >
+        {isOver ? (
+          <span className="font-[family-name:var(--font-inter)] text-[11px] font-medium text-[#C05C35]">
+            {Math.abs(remaining)} over limit
+          </span>
+        ) : isWarning ? (
+          <span className="font-[family-name:var(--font-inter)] text-[11px] text-[#C9893A]">
+            {remaining} left
+          </span>
+        ) : (
+          <span className="font-[family-name:var(--font-inter)] text-[11px] text-[#A09890]">
+            {remaining}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Blocks ───────────────────────────────────────────────────────
 function Blocks() {
   const blocks = [
@@ -620,6 +697,10 @@ export default function LandingPage() {
   // ── Submit ──
   const handleSubmit = async () => {
     if (!image) return;
+    if (context.length > CONTEXT_MAX) {
+      setError(`Context is ${context.length - CONTEXT_MAX} characters over the limit.`);
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -815,20 +896,7 @@ export default function LandingPage() {
               />
 
               {/* Context */}
-              <input
-                type="text"
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-                placeholder="Optional context – e.g. fintech app for users 55+"
-                maxLength={200}
-                className="
-                  w-full px-[16px] py-[15px]
-                  bg-white border border-[#d4cec5] rounded-[10px]
-                  font-[family-name:var(--font-inter)] text-[14px] text-[#1c1917] placeholder-[#a09890]
-                  focus:outline-none focus:border-[#2D7D62] focus:ring-1 focus:ring-[#2D7D62]
-                  transition-colors
-                "
-              />
+              <ContextInput value={context} onChange={setContext} />
 
               {/* Deep critique toggle */}
               <div className="flex gap-[10px] items-center">
