@@ -787,7 +787,7 @@ export default function LandingPage() {
                 </h1>
               </div>
               <p className="font-[family-name:var(--font-sora)] text-[17px] text-[#6d6861] leading-normal">
-                Get a structured audit across six human dimensions.
+                Get a structured gut-check across six human dimensions.
               </p>
             </div>
           </div>
