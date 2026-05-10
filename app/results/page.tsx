@@ -60,7 +60,7 @@ function Nav({ fileName, onNewAudit }: { fileName: string; onNewAudit: () => voi
           onClick={onNewAudit}
           className="text-sm font-medium text-[#1D5A46] bg-[#E5F3EE] border border-[#2D7D62] rounded-lg px-3 py-1.5 hover:bg-[#D0EDDF] transition-colors"
         >
-          New audit
+          New critique
         </button>
       </div>
       {/* Mobile subject bar */}
