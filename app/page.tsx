@@ -956,6 +956,23 @@ export default function LandingPage() {
 
           )}
 
+          {/* Demo video */}
+          <div className="flex flex-col gap-[14px]">
+            <p className="text-[11px] font-semibold tracking-widest uppercase text-[#A09890] font-[family-name:var(--font-inter)]">
+              See it in action
+            </p>
+            <div className="w-full rounded-xl overflow-hidden border border-[#EAE5DE] bg-[#F5F1EB]">
+              <video
+                src="/videos/candor-demo.mp4"
+                controls
+                playsInline
+                preload="metadata"
+                className="w-full h-auto block"
+                aria-label="Candor demo walkthrough"
+              />
+            </div>
+          </div>
+
           {/* Blocks */}
           <Blocks />
 
