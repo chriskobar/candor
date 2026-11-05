@@ -4,7 +4,7 @@
 
 Candor is a design audit tool that uses Claude's vision API to give structured, opinionated feedback on any design screenshot — without the diplomatic softening that makes most design feedback useless.
 
-**[candor.chriskobar.com](https://candor.chriskobar.com)**
+**[candor-public.vercel.app](https://candor-public.vercel.app)**
 
 ---
 
