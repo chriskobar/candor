@@ -1,0 +1,76 @@
+diff --git a/lib/auditPrompt.ts b/lib/auditPrompt.ts
+index e9a2ce5..71b0be1 100644
+--- a/lib/auditPrompt.ts
++++ b/lib/auditPrompt.ts
+@@ -20,12 +20,40 @@ is the product team's north star. A design that scores well on universal
+ dimensions but fails its own stated intent is still a failure. Call that
+ gap out clearly and lead with it in the Designer's Read. Do not soften it.
+ 
++GROUNDING: Critique what is visible, not what you imagine is behind it.
++- Describe icons, labels and elements literally. If you cannot identify
++  one with confidence, say so rather than guessing, and never build a
++  design rationale on top of a guess.
++- How a feature is computed (rules, statistics, a model, an editor) is
++  usually not visible. If you speculate about it, label it as inference
++  ("likely", "appears to") and do not score the design down for a
++  mechanism you cannot see.
++
+ Always respond with valid JSON only. No preamble, no markdown fences.
+ `.trim();
+ 
+ const DEEP_SYSTEM_ADDENDUM = `
+ 
+-In DEEP CRITIQUE mode you evaluate five additional dimensions (eleven total):
++In DEEP CRITIQUE mode you evaluate five additional dimensions (eleven total).
++
++AI SURFACE CHECK — do this before scoring dimensions 9 and 10:
++Decide whether the screen visibly presents AI-generated or AI-driven output.
++Count only on-screen evidence: explicit labels ("AI", "generated", "assistant",
++"Copilot", "summarized by"), AI iconography (sparkles), a chat or prompt
++input, or copy that says a model produced the content. Prices, discounts,
++"lower than usual" comparisons, badges, ratings, rankings and
++recommendations are NOT evidence of AI on their own — they are ordinary
++system-generated information unless the screen says otherwise.
++Record the result in "aiSurface". If "detected" is false:
++- Score dimensions 9 and 10 through the non-AI lens described in each
++  (how the design explains system-generated claims and lets users see and
++  correct system state). Score on what is shown, not on missing AI features.
++- Open each of those "finding" fields (not "suggestion") with "No AI features
++  are visible on this screen."
++- Do not describe any element as AI, a model, algorithmic, or machine
++  learning output — call it "system-generated" — and do not use the
++  bracketed AI sub-heuristic tags in their points.
++- Do not raise AI transparency in the Designer's Read.
+ 
+ 7. Usability heuristics — Nielsen's 10 heuristics applied to the visual design:
+    visibility of system status, match with real world, user control & freedom,
+@@ -114,6 +142,18 @@ SINGLE SCORING MODE (no Primary Design Intent provided):
+ 
+   const aiDimNote = deepCritique ? `
+ NOTE for AI dimensions ("AI transparency & trust" and "AI control & agency"):
++- Complete "aiSurface" first. What follows depends on it:
++
++  IF aiSurface.detected IS FALSE:
++  - Open "finding" (not "suggestion") with "No AI features are visible on
++    this screen."
++  - Write points as plain sentences. Do NOT use square-bracket tags.
++  - Call price comparisons, badges and ratings "system-generated". Do not
++    call them AI, model, algorithmic or machine-learning output — how they
++    are computed is not visible.
++  - Ignore the rest of this note.
++
++  IF aiSurface.detected IS TRUE:
+ - "finding" may be 2–3 sentences (these dimensions warrant fuller commentary).
+ - "suggestion" may be 2–3 sentences.
+ - "points" should list each applicable sub-heuristic as a separate item (up to 6).
+@@ -133,6 +173,10 @@ Evaluate this design and return a JSON object with exactly this shape:
+   ${hasIntent ? `"primaryIntent": "${primaryIntent}",` : ""}
+   ${hasIntent ? `"intentAlignment": <1-2 sentences on intent achievement>,` : ""}
+   "intentGap": ${hasIntent ? "<true | false>" : "false"},
++  ${deepCritique ? `"aiSurface": {
++    "detected": <true | false — does the screen visibly present AI output?>,
++    "evidence": [<quote each visible element that indicates AI; empty array if none>]
++  },` : ""}
+   "designersRead": <3-4 sentences of direct editorial critique. ${hasIntent ? "If intentGap is true, LEAD with the intent failure." : ""}>,
+   "dimensions": [
+     {

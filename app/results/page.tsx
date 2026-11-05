@@ -410,6 +410,12 @@ function LoadingSkeleton() {
 }
 
 // ─── Export utilities ─────────────────────────────────────────────
+function aiSurfaceLabel(s: NonNullable<AuditResult["aiSurface"]>): string {
+  return s.detected
+    ? `AI features detected: ${s.evidence.join("; ")}`
+    : "No AI features visible · AI dimensions scored on system transparency and control";
+}
+
 function buildMarkdown(result: AuditResult, fileName: string, imageSrc?: string): string {
   const date = new Date().toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
@@ -451,6 +457,11 @@ function buildMarkdown(result: AuditResult, fileName: string, imageSrc?: string)
   lines.push(``);
   lines.push(`## ${result.deepCritique ? "Eleven" : "Six"} Dimensions`);
   lines.push(``);
+
+  if (result.aiSurface) {
+    lines.push(`*${aiSurfaceLabel(result.aiSurface)}*`);
+    lines.push(``);
+  }
 
   for (const d of result.dimensions) {
     lines.push(`### ${d.label} — ${d.score.toFixed(1)}`);
@@ -826,6 +837,9 @@ export default function ResultsPage() {
                   </span>
                 </div>
                 <p className="text-xs text-[#A09890]">Tap any card to expand · Deep dive for full detail</p>
+                {result.aiSurface && (
+                  <p className="text-xs text-[#4A4845] mt-1.5">{aiSurfaceLabel(result.aiSurface)}</p>
+                )}
               </div>
               {imageSrc && (
                 <div className="flex-shrink-0 hidden md:block">

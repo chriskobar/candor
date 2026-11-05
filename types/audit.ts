@@ -17,6 +17,12 @@ export type AuditResult = {
   intentAlignment?: string;  // 1–2 sentences: how well design achieves stated intent
   intentGap: boolean;        // true if intentScore significantly trails universalScore
 
+  // ── AI surface (deep critique only) ─────────────────────────────
+  aiSurface?: {
+    detected: boolean;       // Does the screen visibly present AI output?
+    evidence: string[];      // Quoted on-screen elements that indicate AI
+  };
+
   // ── Narrative ───────────────────────────────────────────────────
   designersRead: string;     // 3–4 sentence editorial summary
 
