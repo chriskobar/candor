@@ -1,0 +1,184 @@
+{
+  "model": "claude-sonnet-4-6 (hardcoded in app/api/audit/route.ts; the API response's model id is not passed through)",
+  "endpoint": "POST http://localhost:3000/api/audit (Next.js dev server, this repo)",
+  "harness": "runs/run.sh",
+  "timezone": "America/New_York (machine local)",
+  "runs": [
+    {
+      "file": "v0-original__airbnb__deep__run1.json",
+      "prompt": "prompts/v0-original.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:17:18",
+      "http_status": 200,
+      "response_seconds": 88.357174,
+      "scratch_name": "base_deep"
+    },
+    {
+      "file": "v0-original__airbnb__deep__run2.json",
+      "prompt": "prompts/v0-original.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:19:24",
+      "http_status": 200,
+      "response_seconds": 88.015199,
+      "scratch_name": "base_deep2"
+    },
+    {
+      "file": "v0-original__airbnb__deep__run3.json",
+      "prompt": "prompts/v0-original.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:19:19",
+      "http_status": 200,
+      "response_seconds": 83.140097,
+      "scratch_name": "base_deep3"
+    },
+    {
+      "file": "v0-original__airbnb__standard__run1.json",
+      "prompt": "prompts/v0-original.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "standard",
+      "completed_local_time": "2026-11-05 15:16:36",
+      "http_status": 200,
+      "response_seconds": 45.865357,
+      "scratch_name": "base_std"
+    },
+    {
+      "file": "v0-original__airbnb__standard__run2.json",
+      "prompt": "prompts/v0-original.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "standard",
+      "completed_local_time": "2026-11-05 15:18:38",
+      "http_status": 200,
+      "response_seconds": 41.658849,
+      "scratch_name": "base_std2"
+    },
+    {
+      "file": "v1-surface-check__airbnb__deep__run1.json",
+      "prompt": "prompts/v1-surface-check.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:25:07",
+      "http_status": 200,
+      "response_seconds": 90.731327,
+      "scratch_name": "fix_deep1"
+    },
+    {
+      "file": "v1-surface-check__airbnb__deep__run2.json",
+      "prompt": "prompts/v1-surface-check.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:25:17",
+      "http_status": 200,
+      "response_seconds": 100.778935,
+      "scratch_name": "fix_deep2"
+    },
+    {
+      "file": "v1-surface-check__airbnb__deep__run3.json",
+      "prompt": "prompts/v1-surface-check.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:25:10",
+      "http_status": 200,
+      "response_seconds": 93.978352,
+      "scratch_name": "fix_deep3"
+    },
+    {
+      "file": "v1-surface-check__airbnb__standard__run1.json",
+      "prompt": "prompts/v1-surface-check.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "standard",
+      "completed_local_time": "2026-11-05 15:24:23",
+      "http_status": 200,
+      "response_seconds": 47.085376,
+      "scratch_name": "fix_std"
+    },
+    {
+      "file": "v2-conditional__airbnb__deep__run1.json",
+      "prompt": "prompts/v2-conditional.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:27:13",
+      "http_status": 200,
+      "response_seconds": 88.717908,
+      "scratch_name": "v2_deep1"
+    },
+    {
+      "file": "v2-conditional__airbnb__deep__run2.json",
+      "prompt": "prompts/v2-conditional.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:26:56",
+      "http_status": 200,
+      "response_seconds": 71.988757,
+      "scratch_name": "v2_deep2"
+    },
+    {
+      "file": "v2-conditional__airbnb__deep__run3.json",
+      "prompt": "prompts/v2-conditional.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:27:10",
+      "http_status": 200,
+      "response_seconds": 86.320569,
+      "scratch_name": "v2_deep3"
+    },
+    {
+      "file": "v2-conditional__control__deep__run1.json",
+      "prompt": "prompts/v2-conditional.ts",
+      "screen": "control",
+      "input_sha256_16": "c937063f3c5a2d62",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:30:03",
+      "http_status": 200,
+      "response_seconds": 101.222688,
+      "scratch_name": "ctrl1"
+    },
+    {
+      "file": "v2-conditional__control__deep__run2.json",
+      "prompt": "prompts/v2-conditional.ts",
+      "screen": "control",
+      "input_sha256_16": "c937063f3c5a2d62",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:29:54",
+      "http_status": 200,
+      "response_seconds": 91.549161,
+      "scratch_name": "ctrl2"
+    },
+    {
+      "file": "v2.1-committed__airbnb__deep__run1.json",
+      "prompt": "prompts/v2.1-committed.ts",
+      "screen": "airbnb",
+      "input_sha256_16": "421f33efeb848701",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:32:46",
+      "http_status": 200,
+      "response_seconds": 90.919182,
+      "scratch_name": "final_deep"
+    },
+    {
+      "file": "v2.1-committed__control__deep__run1.json",
+      "prompt": "prompts/v2.1-committed.ts",
+      "screen": "control",
+      "input_sha256_16": "c937063f3c5a2d62",
+      "mode": "deep",
+      "completed_local_time": "2026-11-05 15:32:58",
+      "http_status": 200,
+      "response_seconds": 102.63769,
+      "scratch_name": "final_ctrl"
+    }
+  ]
+}
